@@ -1,5 +1,6 @@
+"use strict";
 console.log('hey dvarkesh');
-var addNumber = function (a, b) {
+const addNumber = (a, b) => {
     return a + b;
 };
 console.log(addNumber(5, 4)); // 9
