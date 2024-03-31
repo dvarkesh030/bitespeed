@@ -11,6 +11,10 @@
   "author": "Dvarkesh Gupta",
   "license": "ISC",
   "dependencies": {
+    "build": "^0.1.4",
     "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21"
   }
 }

@@ -1,7 +1,15 @@
 "use strict";
-console.log('hey dvarkesh');
-const addNumber = (a, b) => {
-    return a + b + 2;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-console.log(addNumber(5, 4)); // 9
-// function with default parameter value
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const app = (0, express_1.default)();
+const port = 3000;
+app.get('/', (req, res) => {
+    res.send('hello there its working');
+    console.log(req.query);
+});
+app.listen(port, () => {
+    console.log('connected Successfully on port ${port}');
+});
