@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var mysql_1 = require("mysql");
-var app = (0, express_1.default)();
+var express = require('express');
+var mysql = require('mysql');
+var app = express();
 var port = 3000;
 app.get('/', function (req, res) {
     res.send('hello there its working');
@@ -11,10 +11,10 @@ app.get('/', function (req, res) {
 app.listen(port, function () {
     console.log('connected Successfully on port ${port}');
 });
-app.use(express_1.default.urlencoded(({ extended: false })));
-app.use(express_1.default.json()); // to support JSON-encoded bodies
+app.use(express.urlencoded(({ extended: false })));
+app.use(express.json()); // to support JSON-encoded bodies
 app.post('/identify', function (req, res) {
-    var pool = mysql_1.default.createPool({
+    var pool = mysql.createPool({
         host: "localhost",
         user: "root",
         password: "",
