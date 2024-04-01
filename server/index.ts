@@ -46,53 +46,71 @@ app.post('/identify',(req:Request , res:Response)=>{
                         queryhasnodata:"no data by query of count email and phonenumber",
                     });
                 }else{
-                    if(Qdata.c==0){
-                        conn.query('select count(*) from contacts where email=? ',[req.body.email]);
-                        var QMailidCount = rows[0];
-                        if(QMailidCount == undefined){
-                            conn.release();
-                            return res.send({
-                                queryhasnodata:"no data by query of Q Mail id Count",
-                            });
-                        }
-                        conn.query('select count(*) from contacts where phonenumber=? ',[req.body.phonenumber]);
-                        var QphonenumberidCount = rows[0];
-                        if(QphonenumberidCount == undefined){
-                            conn.release();
-                            return res.send({
-                                queryhasnodata:"no data by query of Q phonenumber id Count",
-                            });
-                        
-                        }
-
-                    }else if(Qdata.c==1){
-                        conn.query('update contacts set linkPrecedence=\'secondary\' where id in (select id from contacts where email=?)',[req.body.email]);
-                        var QMaildata = rows[0];
-                        if(QMaildata == undefined){
-                            conn.release();
-                            return res.send({
-                                queryhasnodata:"no data by query of select ids with email",
-                            });
-                        }
-                    }else if(Qdata.c>1) {
-                        conn.query('update contacts set linkPrecedence=\'secondary\' where id in (select id from contacts where email=?)',[req.body.email]);
-                        var QMaildata = rows[0];
-                        if(QMaildata == undefined){
-                            conn.release();
-                            return res.send({
-                                queryhasnodata:"no data by query of select ids with email",
-                            });
-                        }
+                    conn.query('insert into contacts(phoneNumber,email,linkPrecedence,createdAt,updatedAt) values(?,?,\'primary\',current_date(),current_date()) ',[req.body.phonenumber,req.body.email]);
+                    conn.query('select count(*) from contacts where email=? ',[req.body.email]);
+                    var QMailidCount = rows[0];
+                    if(QMailidCount == undefined){
+                        conn.release();
+                        return res.send({
+                            queryhasnodata:"no data by query of Q Mail id Count",
+                        });
+                    }
+                    conn.query('select count(*) from contacts where phonenumber=? ',[req.body.phonenumber]);
+                    var QphonenumberidCount = rows[0];
+                    if(QphonenumberidCount == undefined){
+                        conn.release();
+                        return res.send({
+                            queryhasnodata:"no data by query of Q phonenumber id Count",
+                        });
+                    
+                    }else{                            
+                        conn.query(' update contacts set linkPrecedence=\'secondary\' where email=? ',[req.body.email]);
+                        conn.query(' update contacts set linkPrecedence=\'secondary\' where phonenumber=? ',[req.body.phonenumber]);
+                        conn.query('update contacts set linkPrecedence=\'primary\' where id in(select id from contacts order by createdAt limit 1) ');
                     }
                 }
-                res.send({
-                    "contact":{
-		    	        "primaryContatctId": 1,
-			            "emails": [], // first element being email of primary contact 
-			            "phoneNumbers": [], // first element being phoneNumber of primary contact
-			            "secondaryContactIds": [] // Array of all Contact IDs that are "secondary" to the primary contact
-		        },
-                "count":Qdata.c
+                conn.query('select id as primaryid,email as primaryemail,phonenumber as primaryphn from contacts order by createdAt limit 1 ',function(err:any,rows:any){
+                    var primarycontact = rows[0].primaryid;
+                    var primaryemail = rows[0].primaryemail;
+                    var primaryphn = rows[0].primaryphn;
+                });
+                conn.query('select email as secondaryemails from contacts where email=? or phonenumber=? order by createdAt desc ',[req.body.phonenumber,req.body.email],function(err:any,rows:any){                    
+                    var secondaryEmails = [];
+                    for (var i=0;i<rows.length;i++){
+                        secondaryEmails.push(rows[i].secondaryemails);
+                    }
+                });
+                conn.query('select phonenumber as secondarynumbers from contacts where email=? or phonenumber=? order by createdAt desc  ',[req.body.phonenumber,req.body.email],function(err:any,rows:any){                    
+                    var secondaryNums = [];
+                    for (var i=0;i<rows.length;i++){
+                        secondaryNums.push(rows[i].secondarynumbers);
+                    }
+                });
+                
+                conn.query('select email ,phonenumber ,id from contacts where email=? or phonenumber=? order by createdAt desc  ',[req.body.email,req.body.phonenumber],function(err:any,rows:any){
+                    const ids = []; // Create an empty array to store IDs
+                    for (let i = 0; i < rows.length; i++) {
+                        ids.push(rows[i].id); // Extract IDs using a loop
+                    }
+                    const emails = []; // Create an empty array to store IDs
+                    for (let i = 0; i < rows.length; i++) {
+                        emails.push(rows[i].email); // Extract IDs using a loop
+                    }
+                    const phns = []; // Create an empty array to store IDs
+                    for (let i = 0; i < rows.length; i++) {
+                        if(rows[i].phonenumber!= null){
+                            phns.push(rows[i].phonenumber); // Extract IDs using a loop
+                        }
+                    }
+                    
+                     // Extract IDs from each row
+                    res.send(JSON.stringify({ 
+                        "contact":{
+                            "primaryContatctId": ids[0],
+                            "emails": emails, // first element being email of primary contact 
+                            "phoneNumbers": phns, // first element being phoneNumber of primary contact
+                            "secondaryContactIds": ids // Array of all Contact IDs that are "secondary" to the primary contact
+                        }})); 
                 });
                 conn.release();
             });
