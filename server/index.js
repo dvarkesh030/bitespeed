@@ -1,20 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require('express');
-const mysql = require('mysql');
-const app = express();
-const port = 3000;
-app.get('/', (req, res) => {
+var express_1 = require("express");
+var mysql_1 = require("mysql");
+var app = (0, express_1.default)();
+var port = 3000;
+app.get('/', function (req, res) {
     res.send('hello there its working');
     console.log(req.query);
 });
-app.listen(port, () => {
+app.listen(port, function () {
     console.log('connected Successfully on port ${port}');
 });
-app.use(express.urlencoded(({ extended: false })));
-app.use(express.json()); // to support JSON-encoded bodies
-app.post('/identify', (req, res) => {
-    var pool = mysql.createPool({
+app.use(express_1.default.urlencoded(({ extended: false })));
+app.use(express_1.default.json()); // to support JSON-encoded bodies
+app.post('/identify', function (req, res) {
+    var pool = mysql_1.default.createPool({
         host: "localhost",
         user: "root",
         password: "",
@@ -85,16 +85,16 @@ app.post('/identify', (req, res) => {
                     }
                 });
                 conn.query('select email ,phonenumber ,id from contacts where email=? or phonenumber=? order by createdAt desc  ', [req.body.email, req.body.phonenumber], function (err, rows) {
-                    const ids = []; // Create an empty array to store IDs
-                    for (let i = 0; i < rows.length; i++) {
+                    var ids = []; // Create an empty array to store IDs
+                    for (var i = 0; i < rows.length; i++) {
                         ids.push(rows[i].id); // Extract IDs using a loop
                     }
-                    const emails = []; // Create an empty array to store IDs
-                    for (let i = 0; i < rows.length; i++) {
+                    var emails = []; // Create an empty array to store IDs
+                    for (var i = 0; i < rows.length; i++) {
                         emails.push(rows[i].email); // Extract IDs using a loop
                     }
-                    const phns = []; // Create an empty array to store IDs
-                    for (let i = 0; i < rows.length; i++) {
+                    var phns = []; // Create an empty array to store IDs
+                    for (var i = 0; i < rows.length; i++) {
                         if (rows[i].phonenumber != null) {
                             phns.push(rows[i].phonenumber); // Extract IDs using a loop
                         }

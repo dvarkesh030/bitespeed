@@ -1,7 +1,7 @@
 
-import express from 'express';
+const express = require('express')
 import { Request,Response } from 'express';
-import mysql from 'mysql';
+const mysql = require('mysql')
 
 
 
