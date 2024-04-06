@@ -5,7 +5,7 @@ const mysql = require('mysql');
 const app = express();
 const port = 3000;
 app.get('/', (req, res) => {
-    res.send('hello praveen');
+    res.send('hello praveen are you watching IPL');
     console.log(req.query);
 });
 app.listen(port, () => {
